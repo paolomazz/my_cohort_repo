@@ -1,41 +1,46 @@
 library(dplyr)
 library(lubridate)
-library(data.table)
 
-# Example: df has columns patient_id, event_date (as.Date), event_type, etc.
-setDT(df)
-setorder(df, patient_id, event_date)
+# Load your data
+df <- read.csv("/workspaces/my_cohort_repo/dataset.csv") # or your actual file name
 
-# Define a max gap (e.g., 42 weeks = 294 days) to separate episodes
-max_gap <- 294
-
-df[, episode := cumsum(
-  c(TRUE, diff(event_date) > max_gap | diff(patient_id) != 0)
-), by = patient_id]
-
+# Convert date columns to Date type
 df <- df %>%
-  group_by(patient_id, episode) %>%
-  mutate(delivery_date = max(event_date[event_type == "delivery"], na.rm = TRUE),
-         gestational_age_weeks = as.numeric(difftime(delivery_date, event_date, units = "days")) / 7)
+  mutate(
+    first_antenatal_date = as.Date(first_antenatal_date),
+    last_antenatal_date = as.Date(last_antenatal_date),
+    pregnancy_outcome_date = as.Date(pregnancy_outcome_date)
+  )
 
+# 1. Each row is a pregnancy episode (patient-level)
 df <- df %>%
-  mutate(window = case_when(
-    event_date < delivery_date ~ "antenatal",
-    event_date == delivery_date ~ "delivery",
-    event_date > delivery_date ~ "postnatal"
-  ))
+  mutate(episode_id = row_number()) # Optional: unique episode ID
 
-# Classify preterm, term, postterm
+# 2. Calculate gestational age at outcome (in weeks)
 df <- df %>%
-  group_by(patient_id, episode) %>%
-  mutate(gest_age_at_delivery = gestational_age_weeks[event_type == "delivery"][1],
-         delivery_class = case_when(
-           gest_age_at_delivery < 37 ~ "preterm",
-           gest_age_at_delivery >= 37 & gest_age_at_delivery < 42 ~ "term",
-           gest_age_at_delivery >= 42 ~ "postterm"
-         ),
-         c_section = ifelse(mode_of_delivery == "C-section", TRUE, FALSE))   
+  mutate(
+    gestational_age_weeks = as.numeric(difftime(pregnancy_outcome_date, first_antenatal_date, units = "days")) / 7
+  )
 
-# write to arrow file
-arrow::write_feather(dummy_data_days_to_dates, sink = here::here("output", "dummy_dataset_ehrql.arrow"))
-       
+# 3. Apply temporal windows (example: define antenatal and postnatal windows)
+df <- df %>%
+  mutate(
+    antenatal_window = interval(first_antenatal_date, pregnancy_outcome_date),
+    postnatal_window = interval(pregnancy_outcome_date + 1, pregnancy_outcome_date + weeks(6))
+  )
+
+# 4. Classify deliveries
+df <- df %>%
+  mutate(
+    delivery_type = case_when(
+      has_live_birth == TRUE & gestational_age_weeks < 37 ~ "Preterm",
+      has_live_birth == TRUE & gestational_age_weeks >= 37 & gestational_age_weeks < 42 ~ "Term",
+      has_live_birth == TRUE & gestational_age_weeks >= 42 ~ "Postterm",
+      has_stillbirth == TRUE ~ "Stillbirth",
+      TRUE ~ "Other"
+    ),
+    c_section = ifelse(had_mode_of_delivery_recorded == TRUE, "C-section", "Other")
+  )
+
+# Write the processed data
+write.csv(df, "output/pregnancy_episodes_processed.csv", row.names = FALSE)
