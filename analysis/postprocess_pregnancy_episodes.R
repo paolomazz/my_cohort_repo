@@ -34,4 +34,8 @@ df <- df %>%
            gest_age_at_delivery >= 37 & gest_age_at_delivery < 42 ~ "term",
            gest_age_at_delivery >= 42 ~ "postterm"
          ),
-         c_section = ifelse(mode_of_delivery == "C-section", TRUE, FALSE))          
+         c_section = ifelse(mode_of_delivery == "C-section", TRUE, FALSE))   
+
+# write to arrow file
+arrow::write_feather(dummy_data_days_to_dates, sink = here::here("output", "dummy_dataset_ehrql.arrow"))
+       
