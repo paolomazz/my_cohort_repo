@@ -5,7 +5,7 @@ actions:
     run: ehrql execute analysis/ehrql_dataset_definition.py
     outputs:
       highly_sensitive:
-        output/dataset.csv: dataset
+        dataset: output/dataset.csv
 
   postprocess-pregnancy-episodes:
     run: r:latest analysis/postprocess_pregnancy_episodes.R
