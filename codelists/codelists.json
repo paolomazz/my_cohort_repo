@@ -1,3 +1,10 @@
 {
-  "files": {}
+  "files": {
+    "primis-covid19-vacc-uptake-pregdel.csv": {
+      "id": "primis-covid19-vacc-uptake/pregdel/v2.5",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/pregdel/v2.5/",
+      "downloaded_at": "2025-04-30 09:14:26.635441Z",
+      "sha": "eba07c847335a6bd24c20d9973dc7f20b35868fd"
+    }
+  }
 }
