@@ -7,13 +7,6 @@ actions:
       highly_sensitive:
         output/dataset.csv: dataset
 
-  postprocess-pregnancy-episodes:
-    run: r:latest analysis/postprocess_pregnancy_episodes.R
-    needs: [generate-dataset]
-    outputs:
-      highly_sensitive:
-        output/pregnancy_episodes_processed.csv: processed
-
   dummy_dataset_1:
     run: r:latest analysis/dummy_definition_1.R
     outputs:
@@ -51,3 +44,10 @@ actions:
     outputs:
       highly_sensitive:
         output/dataset_2.arrow: dataset
+
+  postprocess-pregnancy-episodes:
+    run: r:latest analysis/postprocess_pregnancy_episodes.R
+    needs: [generate-dataset]
+    outputs:
+      highly_sensitive:
+        output/pregnancy_episodes_processed.csv: processed
