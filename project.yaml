@@ -49,10 +49,10 @@ actions:
     run: ehrql execute analysis/ehrql_dataset_definition.py
     outputs:
       highly_sensitive:
-        output/ehrql_dummy.csv: {}
+        output/dataset.csv: {}
   postprocess-pregnancy-episodes:
     run: r:latest analysis/postprocess_pregnancy_episodes.R
-    needs: [generate_dataset_1]
+    needs: [generate-dataset]
     outputs:
       highly_sensitive:
         output/pregnancy_episodes_processed.csv: {}
