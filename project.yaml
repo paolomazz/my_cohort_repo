@@ -5,15 +5,15 @@ actions:
     run: ehrql execute analysis/ehrql_dataset_definition.py
     outputs:
       highly_sensitive:
-        output/dataset.csv: {}
+        output/ehrql_dummy.csv: dataset
 
   postprocess-pregnancy-episodes:
-    run: r:latest analysis/postprocess_pregnancy_episodes.R
+    run: Rscript analysis/postprocess_pregnancy_episodes.R
     needs: [generate-dataset]
     outputs:
       highly_sensitive:
-        output/pregnancy_episodes_processed.csv: {}
-        
+        output/pregnancy_episodes_processed.csv: processed
+
   dummy_dataset_1:
     run: r:latest analysis/dummy_definition_1.R
     outputs:
