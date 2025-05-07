@@ -44,6 +44,19 @@ actions:
       highly_sensitive:
         dataset: output/dataset_2.arrow
 
+actions:
+  generate-dataset:
+    run: ehrql execute analysis/ehrql_dataset_definition.py
+    outputs:
+      highly_sensitive:
+        output/ehrql_dummy.csv: {}
+  postprocess-pregnancy-episodes:
+    run: Rscript analysis/postprocess_pregnancy_episodes.R
+    needs: [generate-dataset]
+    outputs:
+      moderately_sensitive:
+        output/pregnancy_episodes_processed.csv: {}
+
 #  compare_dataset_2:
 #    run: r:latest analysis/compare_definition_2.R
 #    needs: [dummy_dataset_2a, dummy_dataset_2b, dummy_dataset_2c, generate_dataset_2]
