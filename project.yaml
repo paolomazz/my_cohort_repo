@@ -5,7 +5,7 @@ actions:
     run: ehrql:v1 execute analysis/ehrql_dataset_definition.py
     outputs:
       highly_sensitive:
-        dataset: output/dataset.csv
+        output/dataset.csv: dataset
 
   postprocess-pregnancy-episodes:
     run: r:latest analysis/postprocess_pregnancy_episodes.R
@@ -18,50 +18,36 @@ actions:
     run: r:latest analysis/dummy_definition_1.R
     outputs:
       highly_sensitive:
-        dataset: output/dummy_dataset_1.csv.gz
+        output/dummy_dataset_1.csv.gz: dataset
 
   generate_dataset_1:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition_1.py 
-      --output output/dataset_1.csv.gz
-      --dummy-data-file output/dummy_dataset_1.csv.gz
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_1.py --output output/dataset_1.csv.gz --dummy-data-file output/dummy_dataset_1.csv.gz
     needs: [dummy_dataset_1]
     outputs:
       highly_sensitive:
-        dataset: output/dataset_1.csv.gz
+        output/dataset_1.csv.gz: dataset
   
   dummy_dataset_2a:
     run: r:latest analysis/dummy_definition_2a.R
     outputs:
       highly_sensitive:
-        dataset: output/dummy_dataset_2a.arrow
+        output/dummy_dataset_2a.arrow: dataset
 
   dummy_dataset_2b:
     run: r:latest analysis/dummy_definition_2b.R
     outputs:
       highly_sensitive:
-        dataset: output/dummy_dataset_2b.arrow
+        output/dummy_dataset_2b.arrow: dataset
 
   dummy_dataset_2c:
-      run: ehrql:v1 generate-dataset analysis/dataset_definition_2.py
-        --output output/dummy_dataset_2c.arrow
-        --dummy-data-file output/dummy_dataset_2b.arrow
-      needs: [dummy_dataset_2b]
-      outputs:
-        highly_sensitive:
-          dataset: output/dummy_dataset_2c.arrow
-
-  generate_dataset_2:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition_2.py
-      --output output/dataset_2.arrow
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_2.py --output output/dummy_dataset_2c.arrow --dummy-data-file output/dummy_dataset_2b.arrow
+    needs: [dummy_dataset_2b]
     outputs:
       highly_sensitive:
-        dataset: output/dataset_2.arrow
+        output/dummy_dataset_2c.arrow: dataset
 
-
-
-#  compare_dataset_2:
-#    run: r:latest analysis/compare_definition_2.R
-#    needs: [dummy_dataset_2a, dummy_dataset_2b, dummy_dataset_2c, generate_dataset_2]
-#    outputs:
-#      highly_sensitive:
-#        csv: output/compare_dataset_2.csv
+  generate_dataset_2:
+    run: ehrql:v1 generate-dataset analysis/dataset_definition_2.py --output output/dataset_2.arrow
+    outputs:
+      highly_sensitive:
+        output/dataset_2.arrow: dataset
