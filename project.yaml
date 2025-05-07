@@ -52,7 +52,7 @@ actions:
         output/ehrql_dummy.csv: {}
   postprocess-pregnancy-episodes:
     run: r:latest analysis/postprocess_pregnancy_episodes.R
-    needs: [generate-dataset]
+    needs: [generate_dataset_1]
     outputs:
       highly_sensitive:
         output/pregnancy_episodes_processed.csv: {}
