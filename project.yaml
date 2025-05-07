@@ -2,7 +2,7 @@ version: '4.0'
 
 actions:
   generate-dataset:
-    run: ehrql execute analysis/ehrql_dataset_definition.py
+    run: ehrql:v1 execute analysis/ehrql_dataset_definition.py
     outputs:
       highly_sensitive:
         dataset: output/dataset.csv
