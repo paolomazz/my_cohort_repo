@@ -8,7 +8,7 @@ actions:
         dataset: output/dummy_dataset_1.csv.gz
 
   generate_dataset_1:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition_1.py 
+    run: ehrql:v1 generate-dataset analysis/ehrql_dataset_definition_1.py 
       --output output/dataset_1.csv.gz
       --dummy-data-file output/dummy_dataset_1.csv.gz
     needs: [dummy_dataset_1]
