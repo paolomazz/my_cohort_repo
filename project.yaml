@@ -8,7 +8,7 @@ actions:
         output/dataset.csv: dataset
 
   postprocess-pregnancy-episodes:
-    run: Rscript analysis/postprocess_pregnancy_episodes.R
+    run: r:latest analysis/postprocess_pregnancy_episodes.R
     needs: [generate-dataset]
     outputs:
       highly_sensitive:
