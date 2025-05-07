@@ -51,10 +51,10 @@ actions:
       highly_sensitive:
         output/ehrql_dummy.csv: {}
   postprocess-pregnancy-episodes:
-    run: Rscript analysis/postprocess_pregnancy_episodes.R
+    run: r:latest analysis/postprocess_pregnancy_episodes.R
     needs: [generate-dataset]
     outputs:
-      moderately_sensitive:
+      highly_sensitive:
         output/pregnancy_episodes_processed.csv: {}
 
 #  compare_dataset_2:
